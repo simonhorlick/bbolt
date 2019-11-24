@@ -1,0 +1,22 @@
+PODS:
+  - bbolt (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - bbolt (from `.symlinks/plugins/bbolt/ios`)
+  - Flutter (from `.symlinks/flutter/ios`)
+
+EXTERNAL SOURCES:
+  bbolt:
+    :path: ".symlinks/plugins/bbolt/ios"
+  Flutter:
+    :path: ".symlinks/flutter/ios"
+
+SPEC CHECKSUMS:
+  bbolt: f4f97e20fa05eff1bfa738d53e344a74d15de0a2
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+
+PODFILE CHECKSUM: 7fb83752f59ead6285236625b82473f90b1cb932
+
+COCOAPODS: 1.8.4
