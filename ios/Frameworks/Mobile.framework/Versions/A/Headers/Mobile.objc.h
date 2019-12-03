@@ -20,7 +20,10 @@
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (nullable instancetype)init:(NSString* _Nullable)filepath;
 - (void)close;
+- (void)createBucketIfNotExists:(NSString* _Nullable)bucketName;
+- (NSData* _Nullable)getKey:(NSString* _Nullable)bucket key:(NSString* _Nullable)key;
 - (NSString* _Nonnull)path;
+- (void)putKey:(NSString* _Nullable)bucket key:(NSString* _Nullable)key value:(NSData* _Nullable)value;
 @end
 
 FOUNDATION_EXPORT MobileBoltDB* _Nullable MobileNewBoltDB(NSString* _Nullable filepath);
