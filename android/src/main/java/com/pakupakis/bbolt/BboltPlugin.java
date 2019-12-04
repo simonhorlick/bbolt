@@ -27,30 +27,36 @@ public class BboltPlugin implements MethodCallHandler {
 
   @Override
   public void onMethodCall(MethodCall call, Result result) {
-    if (call.method.equals("getKey")) {
-      String bucket = call.argument("bucket");
-      String key = call.argument("key");
-
-      // Call the go library.
-      byte[] value = db.getKey(bucket, key);
-
-      result.success(value);
-    } else if (call.method.equals("putKey")) {
-      String bucket = call.argument("bucket");
-      String key = call.argument("key");
-      byte[] value = call.argument("value");
-
-      // Call the go library.
-      db.putKey(bucket, key, value);
-
-      result.success(null);
-    }  else if (call.method.equals("createBucketIfNotExists")) {
-      String bucket = call.argument("bucket");
-
-      // Call the go library.
-      db.createBucketIfNotExists(bucket);
-
-      result.success(null);
+    if (call.method.equals("get")) {
+      try {
+        result.success(db.get(call.<String>argument("bucket"), call.<String>argument("key")));
+      } catch (Exception e) {
+        result.error("error", e.getMessage(), null);
+      }
+    } else if (call.method.equals("put")) {
+      try {
+        db.put(
+            call.<String>argument("bucket"),
+            call.<String>argument("key"),
+            call.<byte[]>argument("value"));
+        result.success(null);
+      } catch (Exception e) {
+        result.error("error", e.getMessage(), null);
+      }
+    } else if (call.method.equals("createBucketIfNotExists")) {
+      try {
+        db.createBucketIfNotExists(call.<String>argument("bucket"));
+        result.success(null);
+      } catch (Exception e) {
+        result.error("error", e.getMessage(), null);
+      }
+    } else if (call.method.equals("getKeysByPrefix")) {
+      try {
+        result.success(
+          db.getKeysByPrefix(call.<String>argument("bucket"), call.<String>argument("prefix")));
+      } catch (Exception e) {
+        result.error("error", e.getMessage(), null);
+      }
     } else {
       result.notImplemented();
     }

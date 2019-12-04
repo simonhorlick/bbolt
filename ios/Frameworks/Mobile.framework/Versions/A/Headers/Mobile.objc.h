@@ -13,19 +13,70 @@
 
 @class MobileBoltDB;
 
+/**
+ * BoltDB wraps bbolt database transactions to provide a simplified api.
+ */
 @interface MobileBoltDB : NSObject <goSeqRefInterface> {
 }
 @property(strong, readonly) _Nonnull id _ref;
 
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+/**
+ * NewBoltDB creates and opens a database under the directory given by filepath.
+ */
 - (nullable instancetype)init:(NSString* _Nullable)filepath;
+/**
+ * Close releases all database resources.
+ */
 - (void)close;
-- (void)createBucketIfNotExists:(NSString* _Nullable)bucketName;
-- (NSData* _Nullable)getKey:(NSString* _Nullable)bucket key:(NSString* _Nullable)key;
+/**
+ * CreateBucketIfNotExists creates a bucket with the name bucketName if it
+doesn't already exist.
+ */
+- (BOOL)createBucketIfNotExists:(NSString* _Nullable)bucketName error:(NSError* _Nullable* _Nullable)error;
+/**
+ * Get returns the value associated with the given key. If the bucket does not
+exist it returns ErrBucketNotFound and if the key does not exist it returns
+ErrKeyNotFound.
+ */
+- (NSData* _Nullable)get:(NSString* _Nullable)bucket key:(NSString* _Nullable)key error:(NSError* _Nullable* _Nullable)error;
+/**
+ * GetKeysByPrefix returns a slice containing all keys that match the given
+prefix at the time of the query. The keys are returned as one long utf8 byte
+slice where the individual entries are null separated as gomobile cannot
+currently generate bindings for string slices (see
+https://github.com/golang/go/issues/13445).
+ */
+- (NSData* _Nullable)getKeysByPrefix:(NSString* _Nullable)bucket prefix:(NSString* _Nullable)prefix error:(NSError* _Nullable* _Nullable)error;
+/**
+ * Path returns the filename of the currently open database.
+ */
 - (NSString* _Nonnull)path;
-- (void)putKey:(NSString* _Nullable)bucket key:(NSString* _Nullable)key value:(NSData* _Nullable)value;
+/**
+ * Put sets the value for the given key in the bucket. If the bucket does not
+exist ErrBucketNotFound is returned.
+ */
+- (BOOL)put:(NSString* _Nullable)bucket key:(NSString* _Nullable)key value:(NSData* _Nullable)value error:(NSError* _Nullable* _Nullable)error;
 @end
 
-FOUNDATION_EXPORT MobileBoltDB* _Nullable MobileNewBoltDB(NSString* _Nullable filepath);
+@interface Mobile : NSObject
+/**
+ * ErrBucketNotFound is returned if the given bucket does not exist.
+ */
++ (NSError* _Nullable) errBucketNotFound;
++ (void) setErrBucketNotFound:(NSError* _Nullable)v;
+
+/**
+ * ErrKeyNotFound is returned if the given key does not exist.
+ */
++ (NSError* _Nullable) errKeyNotFound;
++ (void) setErrKeyNotFound:(NSError* _Nullable)v;
+
+@end
+
+/**
+ * NewBoltDB creates and opens a database under the directory given by filepath.
+ */
+FOUNDATION_EXPORT MobileBoltDB* _Nullable MobileNewBoltDB(NSString* _Nullable filepath, NSError* _Nullable* _Nullable error);
 
 #endif

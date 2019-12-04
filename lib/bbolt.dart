@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
@@ -8,14 +9,14 @@ class Bbolt {
 
   static Future<Uint8List> getKey(String bucket, String key) async {
     final Uint8List value =
-        await _channel.invokeMethod('getKey', {"bucket": bucket, "key": key});
+        await _channel.invokeMethod('get', {"bucket": bucket, "key": key});
     print("received value for key $key");
     return value;
   }
 
   static Future<Null> putKey(String bucket, String key, Uint8List value) async {
     await _channel
-        .invokeMethod('putKey', {"bucket": bucket, "key": key, "value": value});
+        .invokeMethod('put', {"bucket": bucket, "key": key, "value": value});
     print("put value for key $key");
     return null;
   }
@@ -27,7 +28,23 @@ class Bbolt {
     return null;
   }
 
-//  static Future<List<String>> getKeysByPrefix(String bucket, String prefix) async {
-//    return _channel.invokeMethod('getKeysByPrefix', {"bucket": bucket, "key": key});
-//  }
+  static Future<List<String>> getKeysByPrefix(
+      String bucket, String prefix) async {
+    var encodedKeysList = await _channel
+        .invokeMethod('getKeysByPrefix', {"bucket": bucket, "prefix": prefix});
+
+    // Parse a list of keys from the returned byte array. The keys are null
+    // separated.
+    var keys = List<String>();
+    var currentKey = List<int>();
+    for (var k in encodedKeysList) {
+      if (k == 0) {
+        keys.add(utf8.decode(currentKey));
+        currentKey.clear();
+      } else {
+        currentKey.add(k);
+      }
+    }
+    return keys;
+  }
 }

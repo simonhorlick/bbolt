@@ -92,8 +92,11 @@ func (b *BoltDB) Put(bucket string, key string, value []byte) error {
 }
 
 // GetKeysByPrefix returns a slice containing all keys that match the given
-// prefix at the time of the query.
-func (b *BoltDB) GetKeysByPrefix(bucket string, prefix string) (keys []string,
+// prefix at the time of the query. The keys are returned as one long utf8 byte
+// slice where the individual entries are null separated as gomobile cannot
+// currently generate bindings for string slices (see
+// https://github.com/golang/go/issues/13445).
+func (b *BoltDB) GetKeysByPrefix(bucket string, prefix string) (keys []byte,
 	err error) {
 	err = b.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
@@ -104,7 +107,9 @@ func (b *BoltDB) GetKeysByPrefix(bucket string, prefix string) (keys []string,
 		c := b.Cursor()
 		prefix := []byte(prefix)
 		for k, _ := c.Seek(prefix); k != nil && bytes.HasPrefix(k, prefix); k, _ = c.Next() {
-			keys = append(keys, string(k))
+			keys = append(keys, k...)
+			// Separate keys using the null character.
+			keys = append(keys, 0)
 		}
 
 		return nil
