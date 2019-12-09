@@ -30,8 +30,12 @@ class Bbolt {
 
   static Future<List<String>> getKeysByPrefix(
       String bucket, String prefix) async {
-    var encodedKeysList = await _channel
+    final Uint8List encodedKeysList = await _channel
         .invokeMethod('getKeysByPrefix', {"bucket": bucket, "prefix": prefix});
+
+    if (encodedKeysList == null) {
+      return List<String>();
+    }
 
     // Parse a list of keys from the returned byte array. The keys are null
     // separated.
