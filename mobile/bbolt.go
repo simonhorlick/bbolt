@@ -78,6 +78,26 @@ func (b *BoltDB) Get(bucket string, key string) (result []byte, err error) {
 	return result, nil
 }
 
+// Delete deletes the given key. If the bucket does not
+// exist it returns ErrBucketNotFound and if the key does not exist it returns
+// ErrKeyNotFound.
+func (b *BoltDB) Delete(bucket string, key string) error {
+	return b.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucket))
+		if b == nil {
+			return fmt.Errorf("%q: %w", bucket, ErrBucketNotFound)
+		}
+
+		v := b.Delete([]byte(key))
+
+		if v == nil {
+			return fmt.Errorf("%q: %w", key, ErrKeyNotFound)
+		}
+
+		return nil
+	})
+}
+
 // Put sets the value for the given key in the bucket. If the bucket does not
 // exist ErrBucketNotFound is returned.
 func (b *BoltDB) Put(bucket string, key string, value []byte) error {

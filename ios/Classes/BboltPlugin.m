@@ -33,6 +33,16 @@ MobileBoltDB* db;
           return;
       }
       result(data);
+  } else if ([@"delete" isEqualToString:call.method]) {
+      NSError *err;
+      NSData *data = [db delete:call.arguments[@"bucket"] key:call.arguments[@"key"] error:&err];
+      if (err != nil) {
+          result([FlutterError errorWithCode:@"error"
+                                     message:[err localizedDescription]
+                                     details:nil]);
+          return;
+      }
+      result(data);
   } else if ([@"put" isEqualToString:call.method]) {
       FlutterStandardTypedData* value = call.arguments[@"value"];
 
