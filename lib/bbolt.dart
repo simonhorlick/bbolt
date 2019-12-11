@@ -21,6 +21,12 @@ class Bbolt {
     return null;
   }
 
+  static Future<Null> deleteKey(String bucket, String key) async {
+    await _channel.invokeMethod('delete', {"bucket": bucket, "key": key});
+    print("delete key $key");
+    return null;
+  }
+
   static Future<Null> createBucketIfNotExists(String bucket) async {
     print("creating bucket $bucket");
     await _channel.invokeMethod('createBucketIfNotExists', {"bucket": bucket});

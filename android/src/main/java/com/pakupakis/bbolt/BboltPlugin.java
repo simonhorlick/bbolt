@@ -33,6 +33,12 @@ public class BboltPlugin implements MethodCallHandler {
       } catch (Exception e) {
         result.error("error", e.getMessage(), null);
       }
+    } else if (call.method.equals("delete")) {
+      try {
+        result.success(db.delete(call.<String>argument("bucket"), call.<String>argument("key")));
+      } catch (Exception e) {
+        result.error("error", e.getMessage(), null);
+      }
     } else if (call.method.equals("put")) {
       try {
         db.put(
