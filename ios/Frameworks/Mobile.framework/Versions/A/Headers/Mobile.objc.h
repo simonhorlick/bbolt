@@ -35,6 +35,12 @@ doesn't already exist.
  */
 - (BOOL)createBucketIfNotExists:(NSString* _Nullable)bucketName error:(NSError* _Nullable* _Nullable)error;
 /**
+ * Delete deletes the given key. If the bucket does not
+exist it returns ErrBucketNotFound and if the key does not exist it returns
+ErrKeyNotFound.
+ */
+- (BOOL)delete:(NSString* _Nullable)bucket key:(NSString* _Nullable)key error:(NSError* _Nullable* _Nullable)error;
+/**
  * Get returns the value associated with the given key. If the bucket does not
 exist it returns ErrBucketNotFound and if the key does not exist it returns
 ErrKeyNotFound.
