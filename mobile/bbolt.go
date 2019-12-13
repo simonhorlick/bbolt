@@ -88,13 +88,7 @@ func (b *BoltDB) Delete(bucket string, key string) error {
 			return fmt.Errorf("%q: %w", bucket, ErrBucketNotFound)
 		}
 
-		v := b.Delete([]byte(key))
-
-		if v == nil {
-			return fmt.Errorf("%q: %w", key, ErrKeyNotFound)
-		}
-
-		return nil
+		return b.Delete([]byte(key))
 	})
 }
 
