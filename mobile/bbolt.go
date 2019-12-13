@@ -82,7 +82,7 @@ func (b *BoltDB) Get(bucket string, key string) (result []byte, err error) {
 // exist it returns ErrBucketNotFound and if the key does not exist it returns
 // ErrKeyNotFound.
 func (b *BoltDB) Delete(bucket string, key string) error {
-	return b.db.View(func(tx *bolt.Tx) error {
+	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
 			return fmt.Errorf("%q: %w", bucket, ErrBucketNotFound)
