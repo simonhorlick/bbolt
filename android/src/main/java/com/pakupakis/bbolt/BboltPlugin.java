@@ -15,6 +15,7 @@ import mobile.BoltDB;
 /** BboltPlugin */
 public class BboltPlugin implements MethodCallHandler {
   private static BoltDB db;
+  static boolean created = false;
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
@@ -22,7 +23,10 @@ public class BboltPlugin implements MethodCallHandler {
     channel.setMethodCallHandler(new BboltPlugin());
 
     File appFiles = registrar.activeContext().getFilesDir();
+    if(!created){
     db = new BoltDB(appFiles.getAbsolutePath());
+    created = true;
+    }
   }
 
   @Override
